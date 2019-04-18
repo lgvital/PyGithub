@@ -878,7 +878,8 @@ class Repository(github.GithubObject.CompletableGithubObject):
         headers, data = self._requester.requestJsonAndCheck(
             "POST",
             self.url + "/check-runs",
-            input=post_parameters
+            input=post_parameters,
+            headers={"Accept": "application/vnd.github.antiope-preview+json"}
         )
         return data
         # TODO: create a class for check runs and return an object
