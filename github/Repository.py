@@ -846,27 +846,35 @@ class Repository(github.GithubObject.CompletableGithubObject):
         """
         assert isinstance(name, (str, unicode)), name
         assert isinstance(head_sha, (str, unicode)), head_sha
-        assert isinstance(details_url, (str, unicode)), details_url
-        assert isinstance(external_id, (str, unicode)), external_id
-        assert isinstance(status, (str, unicode)), status
-        assert isinstance(started_at, (str, unicode)), started_at
-        assert isinstance(conclusion, (str, unicode)), conclusion
-        assert isinstance(completed_at, (str, unicode)), completed_at
+        assert details_url is github.GithubObject.NotSet or isinstance(details_url, (str, unicode)), details_url
+        assert external_id is github.GithubObject.NotSet or isinstance(external_id, (str, unicode)), external_id
+        assert status is github.GithubObject.NotSet or isinstance(status, (str, unicode)), status
+        assert started_at is github.GithubObject.NotSet or isinstance(started_at, (str, unicode)), started_at
+        assert conclusion is github.GithubObject.NotSet or isinstance(conclusion, (str, unicode)), conclusion
+        assert completed_at is github.GithubObject.NotSet or isinstance(completed_at, (str, unicode)), completed_at
         # TODO: create new classes for output and actions?
-        assert isinstance(output, dict), output
-        assert all(isinstance(element, dict) for element in actions), actions
+        assert output is github.GithubObject.NotSet or isinstance(output, dict), output
+        assert actions is github.GithubObject.NotSet or all(isinstance(element, dict) for element in actions), actions
         post_parameters = {
             "name": name,
-            "head_sha": head_sha,
-            "details_url": details_url,
-            "external_id": external_id,
-            "status": status,
-            "started_at": started_at,
-            "conclusion": conclusion,
-            "completed_at": completed_at,
-            "output": output,
-            "actions": actions,
+            "head_sha": head_sha
         }
+        if details_url is not github.GithubObject.NotSet:
+            post_parameters["details_url"] = details_url
+        if external_id is not github.GithubObject.NotSet:
+            post_parameters["external_id"] = external_id
+        if status is not github.GithubObject.NotSet:
+            post_parameters["status"] = status
+        if started_at is not github.GithubObject.NotSet:
+            post_parameters["started_at"] = started_at
+        if conclusion is not github.GithubObject.NotSet:
+            post_parameters["conclusion"] = conclusion
+        if completed_at is not github.GithubObject.NotSet:
+            post_parameters["completed_at"] = completed_at
+        if output is not github.GithubObject.NotSet:
+            post_parameters["output"] = output
+        if actions is not github.GithubObject.NotSet:
+            post_parameters["actions"] = actions
         headers, data = self._requester.requestJsonAndCheck(
             "POST",
             self.url + "/check-runs",
