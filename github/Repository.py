@@ -831,7 +831,7 @@ class Repository(github.GithubObject.CompletableGithubObject):
 
     def create_check_run(self, name, head_sha, details_url=github.GithubObject.NotSet, external_id=github.GithubObject.NotSet, status=github.GithubObject.NotSet, started_at=github.GithubObject.NotSet, conclusion=github.GithubObject.NotSet, completed_at=github.GithubObject.NotSet, output=github.GithubObject.NotSet, actions=github.GithubObject.NotSet):
         """
-        :calls: `POST /repos/:owner/:repo/check-run <http://developer.github.com/v3/checks/runs>`_
+        :calls: `POST /repos/:owner/:repo/check-runs <http://developer.github.com/v3/checks/runs>`_
         :param name: string
         :param head_sha: string
         :param details_url: string
@@ -882,8 +882,66 @@ class Repository(github.GithubObject.CompletableGithubObject):
             headers={"Accept": "application/vnd.github.antiope-preview+json"}
         )
         return data
-        # TODO: create a class for check runs and return an object
-        # return github.GitCommit.GitCommit(self._requester, headers, data, completed=True)
+        # return github.CheckRun.CheckRun(self._requester, headers, data, completed=True)
+
+    # TODO: move to CheckRun class as edit
+    def update_check_run(self, check_run_id, name, head_sha, details_url=github.GithubObject.NotSet, external_id=github.GithubObject.NotSet, status=github.GithubObject.NotSet, started_at=github.GithubObject.NotSet, conclusion=github.GithubObject.NotSet, completed_at=github.GithubObject.NotSet, output=github.GithubObject.NotSet, actions=github.GithubObject.NotSet):
+        """
+        :calls: `PATCH /repos/:owner/:repo/check-runs/:check_run_id <http://developer.github.com/v3/checks/runs>`_
+
+        :param check_run_id: string
+        :param name: string
+        :param head_sha: string
+        :param details_url: string
+        :param external_id: string
+        :param status: string
+        :param started_at: string
+        :param conclusion: string
+        :param completed_at: string
+        :param output: dict
+        :param actions: list of dict
+        :rtype: :class:`github.CheckRun.CheckRun`
+        """
+        assert isinstance(check_run_id, (str, unicode)), check_run_id
+        assert isinstance(name, (str, unicode)), name
+        assert isinstance(head_sha, (str, unicode)), head_sha
+        assert details_url is github.GithubObject.NotSet or isinstance(details_url, (str, unicode)), details_url
+        assert external_id is github.GithubObject.NotSet or isinstance(external_id, (str, unicode)), external_id
+        assert status is github.GithubObject.NotSet or isinstance(status, (str, unicode)), status
+        assert started_at is github.GithubObject.NotSet or isinstance(started_at, (str, unicode)), started_at
+        assert conclusion is github.GithubObject.NotSet or isinstance(conclusion, (str, unicode)), conclusion
+        assert completed_at is github.GithubObject.NotSet or isinstance(completed_at, (str, unicode)), completed_at
+        # TODO: create new classes for output and actions?
+        assert output is github.GithubObject.NotSet or isinstance(output, dict), output
+        assert actions is github.GithubObject.NotSet or all(isinstance(element, dict) for element in actions), actions
+        post_parameters = {
+            "name": name,
+            "head_sha": head_sha
+        }
+        if details_url is not github.GithubObject.NotSet:
+            post_parameters["details_url"] = details_url
+        if external_id is not github.GithubObject.NotSet:
+            post_parameters["external_id"] = external_id
+        if status is not github.GithubObject.NotSet:
+            post_parameters["status"] = status
+        if started_at is not github.GithubObject.NotSet:
+            post_parameters["started_at"] = started_at
+        if conclusion is not github.GithubObject.NotSet:
+            post_parameters["conclusion"] = conclusion
+        if completed_at is not github.GithubObject.NotSet:
+            post_parameters["completed_at"] = completed_at
+        if output is not github.GithubObject.NotSet:
+            post_parameters["output"] = output
+        if actions is not github.GithubObject.NotSet:
+            post_parameters["actions"] = actions
+        headers, data = self._requester.requestJsonAndCheck(
+            "PATCH",
+            self.url + "/check-runs/" + check_run_id,
+            input=post_parameters,
+            headers={"Accept": "application/vnd.github.antiope-preview+json"}
+        )
+        return data
+        # return github.CheckRun.CheckRun(self._requester, headers, data, completed=True)
 
     def create_git_blob(self, content, encoding):
         """
