@@ -202,6 +202,30 @@ class Commit(github.GithubObject.CompletableGithubObject):
             None
         )
 
+    def get_check_runs(self, check_name=github.GithubObject.NotSet, status=github.GithubObject.NotSet, filter=github.GithubObject.NotSet):
+        """
+        :calls: `GET /repos/:owner/:repo/commits/:ref/check-runs/ <http://developer.github.com/v3/repos/statuses>`_
+        :rtype: :class:`github.PaginatedList.PaginatedList` of :class:`github.CheckRun.CheckRun`
+        """
+
+        assert check_name is github.GithubObject.NotSet or isinstance(check_name, (str, unicode)), check_name
+        assert status is github.GithubObject.NotSet or isinstance(status, (str, unicode)), status
+        assert filter is github.GithubObject.NotSet or isinstance(filter, (str, unicode)), filter
+        get_parameters = {}
+        if check_name is not github.GithubObject.NotSet:
+            get_parameters["check_name"] = check_name
+        if status is not github.GithubObject.NotSet:
+            get_parameters["status"] = status
+        if filter is not github.GithubObject.NotSet:
+            get_parameters["filter"] = filter
+        headers, data = self._requester.requestJsonAndCheck(
+            "GET",
+            self.url + "/check-runs",
+            get_parameters
+        )
+        # TODO: return PaginatedList of CheckRuns
+        return data
+
     def get_statuses(self):
         """
         :calls: `GET /repos/:owner/:repo/statuses/:ref <http://developer.github.com/v3/repos/statuses>`_
