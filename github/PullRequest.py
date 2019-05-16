@@ -696,7 +696,7 @@ class PullRequest(github.GithubObject.CompletableGithubObject):
         post_parameters = {"assignees": [assignee.login if isinstance(assignee, github.NamedUser.NamedUser) else assignee for assignee in assignees]}
         headers, data = self._requester.requestJsonAndCheck(
             "POST",
-            self.url + "/assignees",
+            self.issue_url + "/assignees",
             input=post_parameters
         )
         self._useAttributes(data)
